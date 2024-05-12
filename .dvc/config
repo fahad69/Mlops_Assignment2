@@ -1,6 +1,6 @@
-[core]
-    remote = myremote
-   scm = git
+[core]   
+   remote=myremote
 
+   
 ['remote "myremote"']
     url = gdrive://17lFw3A-JK_mBCbIca3-xZPcGnwcUrGDl
