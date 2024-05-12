@@ -7,10 +7,6 @@ from newspaper import Article
 import requests
 from bs4 import BeautifulSoup
 import re
-import nltk
-nltk.download('punkt')
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 import dvc.api
 
 default_args = {
@@ -59,15 +55,6 @@ def extract_articles():
         print("Failed to fetch the page:", response.status_code)
         return None
 
-def clean_text(text):
-    text = text.lower()
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
-    tokens = word_tokenize(text)
-    stop_words = set(stopwords.words('english'))
-    tokens = [token for token in tokens if token not in stop_words]
-    preprocessed_text = ' '.join(tokens)
-    return preprocessed_text
-
 def process_articles(**kwargs):
     ti = kwargs['ti']
     article_links = ti.xcom_pull(task_ids='extract_articles')
@@ -80,11 +67,9 @@ def process_articles(**kwargs):
             article.parse()
             title = article.title
             description = article.meta_description if article.meta_description else article.summary
-            cleaned_description = clean_text(description)
-            articles_data.append({'title': title, 'description': cleaned_description, 'link': link})
+            articles_data.append({'title': title, 'description': description, 'link': link})
             print("\nTitle:", title)
-            print("Description before cleaning:", description)
-            print("Description after cleaning:", cleaned_description)
+            print("Description:", description)
         except Exception as e:
             print("Error scraping article:", e)
 
